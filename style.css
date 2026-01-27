@@ -353,12 +353,14 @@ section{
     justify-content: space-around;
 }
 
-article{
+article {
     display: flex;
-    width: 10rem;
-    justify-content: space-around;
+    align-items: center;  
     gap: 0.5rem;
+    width: auto;          
+    justify-content: flex-start;
 }
+
 
 article .icon{
     cursor: default;
