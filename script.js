@@ -1,111 +1,75 @@
 /* ============================================
    ANKIT CHAKRABORTTY — Portfolio JS
+   Theme toggle · Hamburger menu · Active nav
    ============================================ */
 
-// === CUSTOM CURSOR ===
-const cursor = document.getElementById('cursor');
-const follower = document.getElementById('cursor-follower');
+// ── THEME TOGGLE ──
+const html = document.documentElement;
+const themeToggle = document.getElementById('theme-toggle');
 
-let mouseX = 0, mouseY = 0;
-let followerX = 0, followerY = 0;
+// Load saved preference
+const savedTheme = localStorage.getItem('theme') || 'light';
+html.setAttribute('data-theme', savedTheme);
 
-document.addEventListener('mousemove', (e) => {
-    mouseX = e.clientX;
-    mouseY = e.clientY;
-    cursor.style.left = mouseX + 'px';
-    cursor.style.top = mouseY + 'px';
+themeToggle.addEventListener('click', () => {
+    const current = html.getAttribute('data-theme');
+    const next = current === 'light' ? 'dark' : 'light';
+    html.setAttribute('data-theme', next);
+    localStorage.setItem('theme', next);
 });
 
-function animateFollower() {
-    followerX += (mouseX - followerX) * 0.12;
-    followerY += (mouseY - followerY) * 0.12;
-    follower.style.left = followerX + 'px';
-    follower.style.top = followerY + 'px';
-    requestAnimationFrame(animateFollower);
-}
-animateFollower();
+// ── HAMBURGER MENU ──
+const hamburger = document.getElementById('hamburger');
+const mobileMenu = document.getElementById('mobile-menu');
+const mobileOverlay = document.getElementById('mobile-overlay');
+const mobileClose = document.getElementById('mobile-close');
+const mobileLinks = document.querySelectorAll('.mobile-link');
 
-// === HAMBURGER MENU ===
-function toggleMenu() {
-    const menu = document.getElementById('mobile-menu');
-    const hamburger = document.getElementById('hamburger');
-    menu.classList.toggle('open');
-    hamburger.classList.toggle('open');
-    document.body.style.overflow = menu.classList.contains('open') ? 'hidden' : '';
+function openMenu() {
+    mobileMenu.classList.add('open');
+    mobileOverlay.classList.add('show');
+    hamburger.classList.add('open');
+    document.body.style.overflow = 'hidden';
 }
 
-// === NAVBAR SCROLL ===
+function closeMenu() {
+    mobileMenu.classList.remove('open');
+    mobileOverlay.classList.remove('show');
+    hamburger.classList.remove('open');
+    document.body.style.overflow = '';
+}
+
+hamburger.addEventListener('click', () => {
+    mobileMenu.classList.contains('open') ? closeMenu() : openMenu();
+});
+mobileClose.addEventListener('click', closeMenu);
+mobileOverlay.addEventListener('click', closeMenu);
+mobileLinks.forEach(link => link.addEventListener('click', closeMenu));
+
+// ── NAVBAR SCROLL SHADOW ──
 const navbar = document.getElementById('navbar');
 window.addEventListener('scroll', () => {
-    if (window.scrollY > 50) {
-        navbar.classList.add('scrolled');
-    } else {
-        navbar.classList.remove('scrolled');
-    }
-});
+    navbar.style.boxShadow = window.scrollY > 10
+        ? '0 1px 0 var(--border)'
+        : 'none';
+}, { passive: true });
 
-// === REVEAL ON SCROLL ===
-const revealSections = document.querySelectorAll('.reveal-section');
-const skillGroups = document.querySelectorAll('.skill-group');
-
-const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-        if (entry.isIntersecting) {
-            entry.target.classList.add('visible');
-        }
-    });
-}, { threshold: 0.1 });
-
-revealSections.forEach(section => observer.observe(section));
-
-// Skill bar observer
-const skillObserver = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-        if (entry.isIntersecting) {
-            entry.target.classList.add('in-view');
-        }
-    });
-}, { threshold: 0.3 });
-
-skillGroups.forEach(group => skillObserver.observe(group));
-
-// === ACTIVE NAV LINK ===
+// ── ACTIVE NAV HIGHLIGHT ──
 const sections = document.querySelectorAll('section[id]');
-const navLinks = document.querySelectorAll('.nav-link');
+const navLinks = document.querySelectorAll('.nav-links a');
 
-window.addEventListener('scroll', () => {
-    let current = '';
-    sections.forEach(section => {
-        const sectionTop = section.offsetTop - 200;
-        if (window.scrollY >= sectionTop) {
-            current = section.getAttribute('id');
+const sectionObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            const id = entry.target.getAttribute('id');
+            navLinks.forEach(link => {
+                link.style.color = '';
+                if (link.getAttribute('href') === '#' + id) {
+                    link.style.color = 'var(--text)';
+                }
+            });
         }
     });
-    navLinks.forEach(link => {
-        link.style.color = '';
-        if (link.getAttribute('href') === '#' + current) {
-            link.style.color = 'var(--accent)';
-        }
-    });
-});
+}, { rootMargin: '-40% 0px -55% 0px' });
 
-// === SMOOTH CLOSE MOBILE MENU ON LINK CLICK ===
-document.querySelectorAll('.mobile-menu a').forEach(link => {
-    link.addEventListener('click', () => {
-        const menu = document.getElementById('mobile-menu');
-        const hamburger = document.getElementById('hamburger');
-        menu.classList.remove('open');
-        hamburger.classList.remove('open');
-        document.body.style.overflow = '';
-    });
-});
-
-// === HIDE CURSOR WHEN LEAVING WINDOW ===
-document.addEventListener('mouseleave', () => {
-    cursor.style.opacity = '0';
-    follower.style.opacity = '0';
-});
-document.addEventListener('mouseenter', () => {
-    cursor.style.opacity = '1';
-    follower.style.opacity = '1';
-});
+sections.forEach(s => sectionObserver.observe(s));
