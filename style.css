@@ -363,7 +363,7 @@ section + section { border-top: 1px solid var(--border); }
 /* ── SKILLS ── */
 #experience { background: var(--bg-alt); border-radius: 0; }
 .skills-grid {
-    display: grid; grid-template-columns: repeat(3, 1fr);
+    display: grid; grid-template-columns: repeat(2, 1fr);
     gap: 1.25rem;
 }
 .sgroup {
@@ -390,6 +390,34 @@ section + section { border-top: 1px solid var(--border); }
 .slevel {
     font-family: 'JetBrains Mono', monospace;
     font-size: .62rem; color: var(--text-3); letter-spacing: .03em; flex-shrink: 0;
+}
+
+/* Cybersecurity card */
+.sgroup-cyber {
+    border-color: rgba(34,197,94,.25);
+    background: linear-gradient(135deg, var(--surface) 0%, rgba(34,197,94,.04) 100%);
+}
+.sgroup-cyber .sgroup-label { color: #16a34a; border-bottom-color: rgba(34,197,94,.2); }
+[data-theme="dark"] .sgroup-cyber .sgroup-label { color: #4ade80; }
+.sgroup-cyber:hover { border-color: rgba(34,197,94,.45); box-shadow: 0 4px 16px rgba(34,197,94,.08); }
+
+/* "Learning" badge */
+.slevel.learning {
+    color: #16a34a;
+    background: rgba(34,197,94,.1);
+    border-radius: 4px; padding: .1rem .45rem;
+    position: relative; overflow: hidden;
+}
+[data-theme="dark"] .slevel.learning { color: #4ade80; background: rgba(74,222,128,.1); }
+.slevel.learning::before {
+    content: '';
+    position: absolute; left: 0; top: 0; bottom: 0; width: 3px;
+    background: #22c55e;
+    animation: learningPulse 2s ease-in-out infinite;
+}
+@keyframes learningPulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: .35; }
 }
 
 /* ── PROJECTS ── */
