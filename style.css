@@ -311,8 +311,8 @@ section + section { border-top: 1px solid var(--border); }
 
 .hero-name {
     font-family: 'Syne', sans-serif;
-    font-size: clamp(2.8rem, 6vw, 6rem);
-    font-weight: 800; line-height: 1.0;
+    font-size: clamp(2rem, 4.5vw, 5rem);
+    font-weight: 800; line-height: 1.05;
     letter-spacing: -.04em; color: var(--text);
     margin-bottom: 1.75rem;
 }
