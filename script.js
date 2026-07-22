@@ -102,15 +102,15 @@ window.addEventListener('scroll', () => {
     navbar.style.borderBottomColor = window.scrollY > 8 ? 'var(--border)' : 'transparent';
 }, { passive: true });
 
-// ── TERMINAL TYPEWRITER ──
+// ── SPEC PLATE TYPEWRITER ──
 const commands = [
-    'whoami',
-    'cat about.txt',
-    'g++ -o hello hello.cpp && ./hello',
-    'ls -la ~/projects/',
-    'sudo apt upgrade skills',
-    'git commit -m "keep learning"',
-    'vim main.cpp',
+    'role: software developer',
+    'stack: c++ / linux / web',
+    'status: 2nd yr, CSE @ JGEC',
+    'material: curiosity, alloy grade A',
+    'tolerance: ± zero excuses',
+    'rev: continuous improvement',
+    'next build: in progress',
 ];
 let cmdIdx = 0, charIdx = 0, typing = true;
 const cmdEl = document.getElementById('typed-cmd');
