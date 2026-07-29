@@ -1,139 +1,59 @@
-/* ============================================
-   ANKIT CHAKRABORTTY — Portfolio JS v2
-   Theme · Cursor · Drawer · Reveal · Terminal
-   ============================================ */
+/* ANKIT CHAKRABORTTY — FIELD NOTES · behavior */
 
-// ── THEME ──
-const html        = document.documentElement;
-const themeToggle = document.getElementById('theme-toggle');
-const saved       = localStorage.getItem('theme') || 'dark';
-html.setAttribute('data-theme', saved);
+// ---- mobile plate toggle ----
+const plate = document.getElementById('plate');
+const plateToggle = document.getElementById('plateToggle');
+const overlayClick = document.getElementById('overlayClick');
 
-themeToggle.addEventListener('click', () => {
-    const next = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
-    html.setAttribute('data-theme', next);
-    localStorage.setItem('theme', next);
+function openPlate(){ plate.classList.add('open'); }
+function closePlate(){ plate.classList.remove('open'); }
+
+plateToggle?.addEventListener('click', () => {
+  plate.classList.contains('open') ? closePlate() : openPlate();
+});
+overlayClick?.addEventListener('click', closePlate);
+
+document.querySelectorAll('.plate-nav a').forEach(a => {
+  a.addEventListener('click', () => closePlate());
 });
 
-// ── CUSTOM CURSOR ──
-const cursor      = document.getElementById('cursor');
-const cursorTrail = document.getElementById('cursor-trail');
-let mouseX = 0, mouseY = 0, trailX = 0, trailY = 0;
+// ---- active nav link on scroll ----
+const sections = document.querySelectorAll('.section[id]');
+const navLinks = document.querySelectorAll('.plate-nav a');
 
-document.addEventListener('mousemove', e => {
-    mouseX = e.clientX; mouseY = e.clientY;
-    cursor.style.left = mouseX + 'px';
-    cursor.style.top  = mouseY + 'px';
-});
-
-(function animateTrail() {
-    trailX += (mouseX - trailX) * 0.12;
-    trailY += (mouseY - trailY) * 0.12;
-    cursorTrail.style.left = trailX + 'px';
-    cursorTrail.style.top  = trailY + 'px';
-    requestAnimationFrame(animateTrail);
-})();
-
-// Grow cursor on interactive elements
-document.querySelectorAll('a, button').forEach(el => {
-    el.addEventListener('mouseenter', () => {
-        cursor.style.transform = 'translate(-50%,-50%) scale(2)';
-        cursorTrail.style.opacity = '.15';
-    });
-    el.addEventListener('mouseleave', () => {
-        cursor.style.transform = 'translate(-50%,-50%) scale(1)';
-        cursorTrail.style.opacity = '.4';
-    });
-});
-
-// ── DRAWER ──
-const hamburger  = document.getElementById('hamburger');
-const drawer     = document.getElementById('drawer');
-const overlay    = document.getElementById('overlay');
-const drawerClose= document.getElementById('drawer-close');
-
-const openDrawer  = () => {
-    drawer.classList.add('open');
-    overlay.classList.add('show');
-    hamburger.classList.add('open');
-    document.body.style.overflow = 'hidden';
-};
-const closeDrawer = () => {
-    drawer.classList.remove('open');
-    overlay.classList.remove('show');
-    hamburger.classList.remove('open');
-    document.body.style.overflow = '';
-};
-
-hamburger.addEventListener('click', () => drawer.classList.contains('open') ? closeDrawer() : openDrawer());
-overlay.addEventListener('click', closeDrawer);
-drawerClose.addEventListener('click', closeDrawer);
-document.querySelectorAll('.drawer-link').forEach(l => l.addEventListener('click', closeDrawer));
-
-// ── SCROLL REVEAL ──
-const revealEls = document.querySelectorAll('.reveal');
-const revealObs = new IntersectionObserver(entries => {
-    entries.forEach(e => {
-        if (e.isIntersecting) {
-            e.target.classList.add('visible');
-            revealObs.unobserve(e.target);
-        }
-    });
-}, { threshold: 0.07 });
-revealEls.forEach(el => revealObs.observe(el));
-
-// ── ACTIVE NAV ──
-const sections = document.querySelectorAll('section[id]');
-const navLinks = document.querySelectorAll('.nav-link');
-const navObs   = new IntersectionObserver(entries => {
-    entries.forEach(e => {
-        if (e.isIntersecting) {
-            navLinks.forEach(l => l.classList.remove('active'));
-            const active = document.querySelector(`.nav-link[href="#${e.target.id}"]`);
-            if (active) active.classList.add('active');
-        }
-    });
-}, { rootMargin: '-45% 0px -50% 0px' });
-sections.forEach(s => navObs.observe(s));
-
-// ── NAVBAR BORDER ON SCROLL ──
-const navbar = document.getElementById('navbar');
-window.addEventListener('scroll', () => {
-    navbar.style.borderBottomColor = window.scrollY > 8 ? 'var(--border)' : 'transparent';
-}, { passive: true });
-
-// ── SPEC PLATE TYPEWRITER ──
-const commands = [
-    'role: software developer',
-    'stack: c++ / linux / web',
-    'status: 2nd yr, CSE @ JGEC',
-    'material: curiosity, alloy grade A',
-    'tolerance: ± zero excuses',
-    'rev: continuous improvement',
-    'next build: in progress',
-];
-let cmdIdx = 0, charIdx = 0, typing = true;
-const cmdEl = document.getElementById('typed-cmd');
-
-function typeLoop() {
-    const cmd = commands[cmdIdx];
-    if (typing) {
-        if (charIdx <= cmd.length) {
-            cmdEl.textContent = cmd.slice(0, charIdx++);
-            setTimeout(typeLoop, 60 + Math.random() * 40);
-        } else {
-            typing = false;
-            setTimeout(typeLoop, 1800);
-        }
-    } else {
-        if (charIdx > 0) {
-            cmdEl.textContent = cmd.slice(0, --charIdx);
-            setTimeout(typeLoop, 28);
-        } else {
-            typing = true;
-            cmdIdx = (cmdIdx + 1) % commands.length;
-            setTimeout(typeLoop, 400);
-        }
+const navObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      const id = entry.target.getAttribute('id');
+      navLinks.forEach(link => {
+        link.classList.toggle('active', link.getAttribute('href') === `#${id}`);
+      });
     }
-}
-setTimeout(typeLoop, 800);
+  });
+}, { rootMargin: '-40% 0px -50% 0px', threshold: 0 });
+
+sections.forEach(s => navObserver.observe(s));
+
+// ---- reveal on scroll ----
+const revealEls = document.querySelectorAll('.reveal-el');
+const revealObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('in');
+      revealObserver.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.15 });
+revealEls.forEach(el => revealObserver.observe(el));
+
+// ---- circuit trace fill-in animation ----
+const traceRows = document.querySelectorAll('.trace-row');
+const traceObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('on');
+      traceObserver.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.4 });
+traceRows.forEach(row => traceObserver.observe(row));
